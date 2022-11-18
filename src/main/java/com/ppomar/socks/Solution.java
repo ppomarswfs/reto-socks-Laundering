@@ -16,7 +16,7 @@ public class Solution {
         return parSocks;
     }
 
-    private  int getPairsFromOneList(int[] elements) {
+    private int getPairsFromOneList(int[] elements) {
         int pairs = 0;
         Map<Integer, Integer> groups = getGroups(elements);
         for (Map.Entry<Integer, Integer> entry : groups.entrySet()) {
@@ -25,11 +25,11 @@ public class Solution {
         return pairs;
     }
 
-    private  int countPairs(Integer value) {
+    private int countPairs(Integer value) {
         return value / 2;
     }
 
-    private  int getPairsFromCleanAndDirty(int k, int[] clean, int[] dirty) {
+    private int getPairsFromCleanAndDirty(int k, int[] clean, int[] dirty) {
         int pairs = 0;
         int index = 0;
         int[] originalDirty = Arrays.copyOf(dirty, dirty.length);
@@ -47,16 +47,16 @@ public class Solution {
         return pairs;
     }
 
-    private  int getMaxPairSocksToWash(int[] dirty, int k) {
+    private int getMaxPairSocksToWash(int[] dirty, int k) {
         int pairsDirties = getPairsFromOneList(dirty);
         return Math.min(k, pairsDirties * 2) / 2;
     }
 
-    private  boolean hasPairClean(int[] clean, int value) {
+    private boolean hasPairClean(int[] clean, int value) {
         return Arrays.stream(clean).anyMatch(i -> i == value);
     }
 
-    public  int[] getLooseSocks(int[] elements) {
+    public int[] getLooseSocks(int[] elements) {
         ArrayList<Integer> looseSocks = new ArrayList<>();
         Map<Integer, Integer> groups = getGroups(elements);
         for (Map.Entry<Integer, Integer> entry : groups.entrySet()) {
@@ -67,22 +67,22 @@ public class Solution {
         return looseSocks.stream().mapToInt(i -> i).toArray();
     }
 
-    private  boolean hasNotPair(int value) {
+    private boolean hasNotPair(int value) {
         return value % 2 != 0;
     }
 
-    public  int[] removeSock(int[] arr, int valueToRemove) {
+    public int[] removeSock(int[] arr, int valueToRemove) {
         List<Integer> list = Arrays.stream(arr).boxed().collect(Collectors.toList());
         // this list allways contains item
         list.remove(foundFirstValue(arr, valueToRemove));
         return list.stream().mapToInt(i -> i).toArray();
     }
 
-    private  int foundFirstValue(int[] arr, int valueToRemove) {
+    private int foundFirstValue(int[] arr, int valueToRemove) {
         return Arrays.stream(arr).boxed().collect(Collectors.toList()).indexOf(valueToRemove);
     }
 
-    private  Map<Integer, Integer> getGroups(int[] list) {
+    private Map<Integer, Integer> getGroups(int[] list) {
         Map<Integer, Integer> groups = new TreeMap<>();
         for (int type : list) {
             groups.merge(type, 1, Integer::sum);
