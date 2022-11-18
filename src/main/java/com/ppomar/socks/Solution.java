@@ -43,13 +43,12 @@ public class Solution {
             }
             index++;
         }
-        pairs += getMaxPairSocksToWash(dirty, k);
+        pairs += getPairsFromDirty(dirty, k);
         return pairs;
     }
 
-    private int getMaxPairSocksToWash(int[] dirty, int k) {
-        int pairsDirties = getPairsFromOneList(dirty);
-        return Math.min(k, pairsDirties * 2) / 2;
+    private int getPairsFromDirty(int[] dirty, int k) {
+        return Math.min(k, getPairsFromOneList(dirty) * 2) / 2;
     }
 
     private boolean hasPairClean(int[] clean, int value) {
