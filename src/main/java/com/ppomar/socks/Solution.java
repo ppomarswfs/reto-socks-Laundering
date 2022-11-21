@@ -6,8 +6,8 @@ import java.util.TreeMap;
 public class Solution {
 
     public int solution(int capacity, int[] clean, int[] dirty) {
-        Map<Integer, Integer> cleanMap = getGroups(clean);
-        Map<Integer, Integer> dirtyMap = getGroups(dirty);
+        Map<Integer, Integer> cleanMap = getMapFrequencies(clean);
+        Map<Integer, Integer> dirtyMap = getMapFrequencies(dirty);
 
         int parSocks = getPairsFromMap(cleanMap);
         parSocks += searchDirtyPair(cleanMap, dirtyMap, capacity);
@@ -54,7 +54,7 @@ public class Solution {
         return value % 2 != 0;
     }
 
-    private Map<Integer, Integer> getGroups(int[] list) {
+    private Map<Integer, Integer> getMapFrequencies(int[] list) {
         Map<Integer, Integer> groups = new TreeMap<>();
         for (int type : list) {
             groups.merge(type, 1, Integer::sum);
