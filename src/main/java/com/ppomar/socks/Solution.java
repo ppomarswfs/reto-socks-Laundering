@@ -1,27 +1,44 @@
 package main.java.com.ppomar.socks;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 public class Solution {
 
-    public int solution(int k, int[] clean, int[] dirty) {
-        int parSocks = getPairsFromOneList(clean);
-        clean = getLooseSocks(clean);
-        parSocks += getPairsFromCleanAndDirty(k, clean, dirty);
+    public int solution(int capacity, int[] clean, int[] dirty) {
+        Map<Integer, Integer> cleanMap = getGroups(clean);
+        Map<Integer, Integer> dirtyMap = getGroups(dirty);
+
+        int parSocks = getPairsFromMap(cleanMap);
+        parSocks += searchDirtyPair(cleanMap, dirtyMap, capacity);
         return parSocks;
     }
 
-    private int getPairsFromOneList(int[] elements) {
+    private int getPairsFromMap(Map<Integer, Integer> map) {
         int pairs = 0;
-        Map<Integer, Integer> groups = getGroups(elements);
-        for (Map.Entry<Integer, Integer> entry : groups.entrySet()) {
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
             pairs += countPairs(entry.getValue());
         }
+        return pairs;
+    }
+
+    private int searchDirtyPair(Map<Integer, Integer> cleanMap, Map<Integer, Integer> dirtyMap, int capacity) {
+        // una vez hecha la pareja sigue con el for
+        // aunque no queden mas parejas por hacer sigue con el for
+        // breaks?
+        int pairs = 0;
+        for (Map.Entry<Integer, Integer> colorClean : cleanMap.entrySet()) {
+            if (hasNotPair(colorClean.getValue()) && capacity > 0) {
+                for (Map.Entry<Integer, Integer> colorDirty : dirtyMap.entrySet()) {
+                    if (colorDirty.getKey().equals(colorClean.getKey()) && colorDirty.getValue() > 0) {
+                        pairs++;
+                        capacity--;
+                        colorDirty.setValue(colorDirty.getValue() - 1);
+                    }
+                }
+            }
+        }
+        pairs += getPairsFromDirty(dirtyMap, capacity);
         return pairs;
     }
 
@@ -29,56 +46,12 @@ public class Solution {
         return value / 2;
     }
 
-    private int getPairsFromCleanAndDirty(int k, int[] clean, int[] dirty) {
-        int pairs = 0;
-        int index = 0;
-        int[] originalDirty = Arrays.copyOf(dirty, dirty.length);
-        while (index < originalDirty.length && k > 0) {
-            int value = originalDirty[index];
-            if (hasPairClean(clean, value)) {
-                k--;
-                pairs++;
-                dirty = removeSock(dirty, value);
-                clean = removeSock(clean, value);
-            }
-            index++;
-        }
-        pairs += getPairsFromDirty(dirty, k);
-        return pairs;
-    }
-
-    private int getPairsFromDirty(int[] dirty, int k) {
-        return Math.min(k, getPairsFromOneList(dirty) * 2) / 2;
-    }
-
-    private boolean hasPairClean(int[] clean, int value) {
-        return Arrays.stream(clean).anyMatch(i -> i == value);
-    }
-
-    public int[] getLooseSocks(int[] elements) {
-        ArrayList<Integer> looseSocks = new ArrayList<>();
-        Map<Integer, Integer> groups = getGroups(elements);
-        for (Map.Entry<Integer, Integer> entry : groups.entrySet()) {
-            if (hasNotPair(entry.getValue())) {
-                looseSocks.add(entry.getKey());
-            }
-        }
-        return looseSocks.stream().mapToInt(i -> i).toArray();
+    private int getPairsFromDirty(Map<Integer, Integer> map, int k) {
+        return Math.min(k, getPairsFromMap(map) * 2) / 2;
     }
 
     private boolean hasNotPair(int value) {
         return value % 2 != 0;
-    }
-
-    public int[] removeSock(int[] arr, int valueToRemove) {
-        List<Integer> list = Arrays.stream(arr).boxed().collect(Collectors.toList());
-        // this list allways contains item
-        list.remove(foundFirstValue(arr, valueToRemove));
-        return list.stream().mapToInt(i -> i).toArray();
-    }
-
-    private int foundFirstValue(int[] arr, int valueToRemove) {
-        return Arrays.stream(arr).boxed().collect(Collectors.toList()).indexOf(valueToRemove);
     }
 
     private Map<Integer, Integer> getGroups(int[] list) {
